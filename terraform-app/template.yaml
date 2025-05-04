@@ -53,8 +53,15 @@ spec:
       input:
         url: ./template
         values:
-          app_name: ${{parameters.component_id}}
-          app_env: ${{parameters.environment}}
+          component_id: ${{ parameters.component_id }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          terraform_repo_url: ${{ parameters.terraform_repo_url }}
+          terraform_directory: ${{ parameters.terraform_directory }}
+          terraform_version: ${{ parameters.terraform_version }}
+          tf_vars: ${{ parameters.tf_vars }}
+          environment: ${{ parameters.environment }}
+          auto_apply: ${{ parameters.auto_apply }}
 
     - id: publish
       name: Publish
