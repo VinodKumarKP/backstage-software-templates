@@ -65,7 +65,7 @@ spec:
               type: string
               description: Variable value
         tf_vars2:
-          title: Terraform Variables
+          title: Terraform Variables2
           type: object
           description: Key-value pairs for Terraform variables
           properties:
