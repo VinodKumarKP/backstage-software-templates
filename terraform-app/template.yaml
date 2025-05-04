@@ -1,31 +1,50 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: python-template
-  title: Python flask template
-  description: Provisions a minimalistic flask application
+  name: terraform-deployment-template
+  title: Terraform Deployment Template
+  description: Template for deploying Terraform code from a separate repository
+  tags:
+    - terraform
+    - iac
+    - recommended
 spec:
   owner: development
   type: service
 
   parameters:
-    - title: Fill in some steps
+    - title: Provide deployment information
       required:
         - component_id
-        - environment
+        - owner
+        - terraform_repo_url
       properties:
         component_id:
-          title: Component name
+          title: Name
           type: string
-          description: Provide a component (microservice) name
-          pattern: '^([a-zA-Z][a-zA-Z0-9]*)(-[a-zA-Z0-9]+)*$'
-        environment:
-          title: Environment
+          description: Unique name for the deployment
+          ui:field: EntityNamePicker
+        description:
+          title: Description
           type: string
-          description: The environment where this component will be deployed
-          enum:
-            - dev
-            - prod
+          description: Help others understand what this deployment does
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+        terraform_repo_url:
+          title: Terraform Repository URL
+          type: string
+          description: URL to the Git repository containing Terraform code
+        terraform_directory:
+          title: Terraform Directory
+          type: string
+          description: Path to Terraform code within the repository
+          default: "/"
 
   steps:
     - id: fetch-base
