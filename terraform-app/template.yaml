@@ -46,6 +46,31 @@ spec:
           description: Path to Terraform code within the repository
           default: "/"
 
+    - title: Configure Terraform deployment
+      properties:
+        terraform_version:
+          title: Terraform Version
+          type: string
+          description: Version of Terraform to use
+          default: "1.5.7"
+        tf_vars:
+          title: Terraform Variables
+          type: object
+          description: Key-value pairs for Terraform variables
+        environment:
+          title: Target Environment
+          type: string
+          enum:
+            - development
+            - staging
+            - production
+          default: development
+        auto_apply:
+          title: Auto Apply
+          type: boolean
+          description: Automatically apply Terraform changes
+          default: false
+
   steps:
     - id: fetch-base
       name: Fetch Base
