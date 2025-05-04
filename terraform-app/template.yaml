@@ -114,6 +114,18 @@ spec:
       input:
         message: "contents: ${{ steps['parse'].output.content }}!"
 
+    - id: parse_workflow
+      name: Parse file
+      action: roadiehq:utils:fs:parse
+      input:
+        path: '.github/workflows/terraform-deploy.yaml'
+
+    - id: log-message
+      name: Log Parsed Contents
+      action: debug:log
+      input:
+        message: "contents: ${{ steps['parse_workflow'].output.content }}!"
+
     - id: publish
       name: Publish
       action: publish:github
