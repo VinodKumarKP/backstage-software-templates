@@ -94,9 +94,10 @@ spec:
       input:
         allowedHosts: ['github.com']
         description: ${{ parameters.description }}
-        repoUrl: github.com?owner=${owner}&repo=${{ parameters.component_id }}
+        repoUrl: github.com?owner=VinodKumarKP1984&repo=${{ parameters.component_id }}
         defaultBranch: main
         protectDefaultBranch: false
+        repoVisibility: public
 
     - id: register
       name: Register
