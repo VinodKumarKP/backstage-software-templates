@@ -11,3 +11,6 @@ terraform:
   variables:
     environment: ${{ values.environment }}
     region: "us-west-2"
+    { { #each values.tf_vars}}
+    {{@key } }: {{this}}
+    {{/each}}
