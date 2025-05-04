@@ -112,6 +112,18 @@ spec:
           auto_apply: ${{ parameters.auto_apply }}
           app_env: ${{ parameters.environment }}
 
+    - id: parse
+      name: Parse file
+      action: roadiehq:utils:fs:parse
+      input:
+        path: 'terraform.yaml'
+
+    - id: log-message
+      name: Log Parsed Contents
+      action: debug:log
+      input:
+        message: "contents: ${{ steps['parse'].output.content }}!"
+
     - id: publish
       name: Publish
       action: publish:github
