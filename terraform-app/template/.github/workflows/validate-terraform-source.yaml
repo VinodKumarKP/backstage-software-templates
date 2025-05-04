@@ -36,7 +36,7 @@ jobs:
       - name: Validate directory structure
         id: validate_structure
         run: |
-          cd terraform-code/${{ github.event.inputs.terraform_directory || values.terraform_directory }}
+          cd terraform-code/${{ values.terraform_directory }}
           
           echo "## Terraform Source Repository Structure" > validation_report.md
           echo "" >> validation_report.md
