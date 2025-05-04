@@ -55,15 +55,20 @@ spec:
           default: "1.5.7"
         tf_vars:
           title: Terraform Variables
-          type: object
+          type: array
           description: Key-value pairs for Terraform variables
-          properties:
-            key:
-              type: string
-              description: Variable name
-            value:
-              type: string
-              description: Variable value
+          items:
+            type: object
+            required:
+              - key
+              - value
+            properties:
+              key:
+                type: string
+                description: Variable name
+              value:
+                type: string
+                description: Variable value
         tf_vars2:
           title: Terraform Variables2
           type: object
