@@ -12,8 +12,8 @@ terraform:
     environment: ${{ values.environment }}
     region: "us-west-2"
 
-    { %- if(values.tf_vars.length) % }
-    { %- for thing in values.tf_vars % }
+    {%- if(values.tf_vars.length) %}
+    {%- for thing in values.tf_vars %}
     ${{ thing.key }}: ${{ thing.value }}
-    { %- endfor % }
-    { %- endif % }
+    {%- endfor %}
+    {%- endif %}
