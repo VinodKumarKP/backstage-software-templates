@@ -228,7 +228,7 @@ jobs:
           cp validation_report.md $GITHUB_WORKSPACE/validation_report.md
 
       - name: Upload validation report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: terraform-validation-report
           path: validation_report.md
