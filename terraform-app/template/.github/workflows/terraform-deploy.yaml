@@ -44,7 +44,7 @@ jobs:
         run: |
           # Create backend config file
           cat > backend.conf <<EOF
-          bucket = "terraform-state-${{ values.environment }}"
+          bucket = "terraform-state-${{ values.environment }}-vkp"
           key = "${{ values.component_id }}/terraform.tfstate"
           region = "us-west-2"
           encrypt = true
