@@ -202,9 +202,9 @@ jobs:
           echo "### Summary" >> validation_report.md
           echo "" >> validation_report.md
           
-          ISSUES=$(grep -c "❌" validation_report.md)
-          WARNINGS=$(grep -c "⚠️" validation_report.md)
-          PASSES=$(grep -c "✅" validation_report.md)
+          ISSUES=$(grep -c "❌" validation_report.md || true)
+          WARNINGS=$(grep -c "⚠️" validation_report.md || true)
+          PASSES=$(grep -c "✅" validation_report.md || true)
           
           echo "- ✅ Passed checks: $PASSES" >> validation_report.md
           echo "- ⚠️ Warnings: $WARNINGS" >> validation_report.md
