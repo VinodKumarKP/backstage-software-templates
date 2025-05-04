@@ -234,4 +234,4 @@ jobs:
           path: validation_report.md
 
       - name: Create validation summary
-        run: cat terraform-code/${{ github.event.inputs.terraform_directory || values.terraform_directory }}/validation_report.md >> $GITHUB_STEP_SUMMARY
+        run: cat terraform-code/${{ values.terraform_directory }}/validation_report.md >> $GITHUB_STEP_SUMMARY
