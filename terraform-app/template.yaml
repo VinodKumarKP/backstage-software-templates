@@ -1,101 +1,50 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: terraform-deployment-template
-  title: Terraform Deployment Template
-  description: Template for deploying Terraform code from a separate repository
-  tags:
-    - terraform
-    - iac
-    - recommended
+  name: python-template
+  title: Python flask template
+  description: Provisions a minimalistic flask application
 spec:
-  owner: infrastructure-team
+  owner: development
   type: service
 
   parameters:
-    - title: Provide deployment information
+    - title: Fill in some steps
       required:
         - component_id
-        - owner
-        - terraform_repo_url
+        - environment
       properties:
         component_id:
-          title: Name
+          title: Component name
           type: string
-          description: Unique name for the deployment
-          ui:field: EntityNamePicker
-        description:
-          title: Description
-          type: string
-          description: Help others understand what this deployment does
-        owner:
-          title: Owner
-          type: string
-          description: Owner of the component
-          ui:field: OwnerPicker
-          ui:options:
-            allowedKinds:
-              - Group
-        terraform_repo_url:
-          title: Terraform Repository URL
-          type: string
-          description: URL to the Git repository containing Terraform code
-        terraform_directory:
-          title: Terraform Directory
-          type: string
-          description: Path to Terraform code within the repository
-          default: "/"
-
-    - title: Configure Terraform deployment
-      properties:
-        terraform_version:
-          title: Terraform Version
-          type: string
-          description: Version of Terraform to use
-          default: "1.5.7"
-        tf_vars:
-          title: Terraform Variables
-          type: object
-          description: Key-value pairs for Terraform variables
+          description: Provide a component (microservice) name
+          pattern: '^([a-zA-Z][a-zA-Z0-9]*)(-[a-zA-Z0-9]+)*$'
         environment:
-          title: Target Environment
+          title: Environment
           type: string
+          description: The environment where this component will be deployed
           enum:
-            - development
-            - staging
-            - production
-          default: development
-        auto_apply:
-          title: Auto Apply
-          type: boolean
-          description: Automatically apply Terraform changes
-          default: false
+            - dev
+            - prod
 
   steps:
-    - id: template
-      name: Create Deployment Configuration
+    - id: fetch-base
+      name: Fetch Base
       action: fetch:template
       input:
         url: ./template
         values:
-          component_id: ${{ parameters.component_id }}
-          description: ${{ parameters.description }}
-          owner: ${{ parameters.owner }}
-          terraform_repo_url: ${{ parameters.terraform_repo_url }}
-          terraform_directory: ${{ parameters.terraform_directory }}
-          terraform_version: ${{ parameters.terraform_version }}
-          tf_vars: ${{ parameters.tf_vars }}
-          environment: ${{ parameters.environment }}
-          auto_apply: ${{ parameters.auto_apply }}
+          app_name: ${{parameters.component_id}}
+          app_env: ${{parameters.environment}}
 
     - id: publish
-      name: Publish to GitHub
+      name: Publish
       action: publish:github
       input:
-        allowedHosts: ['github.com']
-        description: ${{ parameters.description }}
-        repoUrl: github.com?owner=VinodKumarKP1984&repo=${{ parameters.component_id }}
-        defaultBranch: main
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.component_id }}
+        repoUrl: github.com?owner=VinodKumarKP1984&repo=${{parameters.component_id}}
         protectDefaultBranch: false
         repoVisibility: public
 
@@ -103,13 +52,10 @@ spec:
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: '/catalog-info.yaml'
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
 
   output:
     links:
       - title: Repository
-        url: ${{ steps.publish.output.remoteUrl }}
-      - title: Open in catalog
-        icon: catalog
-        entityRef: ${{ steps.register.output.entityRef }}
+        url: ${{ steps['publish'].output.remoteUrl }}
