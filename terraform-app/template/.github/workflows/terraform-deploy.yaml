@@ -31,9 +31,37 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
       - name: Terraform Init
         working-directory: terraform-code/${{ values.terraform_directory }}
-        run: terraform init
+        run: |
+          # Create backend config file
+          cat > backend.conf <<EOF
+          bucket = "terraform-state-${{ values.environment }}"
+          key = "${{ values.component_id }}/terraform.tfstate"
+          region = "us-west-2"
+          encrypt = true
+          dynamodb_table = "terraform-state-locks"
+          EOF
+          
+          terraform init -backend-config=backend.conf
+      
+
+      {%- if(values.tf_vars.length) %}
+      - name: Create Terraform Variables
+        run: |
+          cat > terraform-code/${{ values.terraform_directory }}/terraform.tfvars <<EOF
+          {%- for thing in values.tf_vars %}
+          ${{ thing.key }} = ${{ thing.value }}
+          {%- endfor %}
+          EOF
+      {%- endif %}
 
       - name: Terraform Format
         working-directory: terraform-code/${{ values.terraform_directory }}
@@ -43,7 +71,7 @@ jobs:
         working-directory: terraform-code/${{ values.terraform_directory }}
         run: |
           # Apply variables from config
-          export TF_VAR_file="../terraform.tfvars"
+          export TF_VAR_file="terraform.tfvars"
           terraform plan -var-file=$TF_VAR_file -out=tfplan
 
       - name: Terraform Apply
