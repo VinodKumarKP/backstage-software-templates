@@ -24,9 +24,9 @@ jobs:
       - name: Clone Terraform repository
         uses: actions/checkout@v3
         with:
-          repository: ${{ github.event.inputs.terraform_repo_url || values.terraform_repo_url | replace('https://github.com/', '') }}
+          repository: ${{ values.terraform_repo_url | replace('https://github.com/', '') }}
+          ref: "main"
           path: terraform-code
-          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
