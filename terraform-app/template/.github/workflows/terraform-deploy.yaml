@@ -51,6 +51,12 @@ jobs:
           dynamodb_table = "terraform-state-locks"
           EOF
           
+          cat backend.tf <<EOF
+          terraform {
+            backend "s3" {}
+          }
+          EOF
+          
           terraform init -backend-config=backend.conf
       
 
