@@ -62,6 +62,7 @@ spec:
           tf_vars: ${{ parameters.tf_vars }}
           environment: ${{ parameters.environment }}
           auto_apply: ${{ parameters.auto_apply }}
+          app_env: ${{ parameters.environment }}
 
     - id: publish
       name: Publish
