@@ -12,6 +12,6 @@ terraform:
     environment: ${{ values.environment }}
     region: "us-west-2"
     # Add additional variables defined in parameters
-    {{#each values.tf_vars}}
-    {{@key}}: {{this}}
-    {{/each}}
+#    {{#each values.tf_vars}}
+#    {{@key}}: {{this}}
+#    {{/each}}
