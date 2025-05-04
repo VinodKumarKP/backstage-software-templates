@@ -57,6 +57,13 @@ spec:
           title: Terraform Variables
           type: object
           description: Key-value pairs for Terraform variables
+          properties:
+            key:
+              type: string
+              description: Variable name
+            value:
+              type: string
+              description: Variable value
         environment:
           title: Target Environment
           type: string
