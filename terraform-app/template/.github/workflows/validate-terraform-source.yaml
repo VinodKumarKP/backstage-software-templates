@@ -2,6 +2,10 @@
 name: Validate Terraform Source
 
 on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       terraform_repo_url:
