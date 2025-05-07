@@ -70,6 +70,13 @@ jobs:
           EOF
       {%- endif %}
 
+      - name: Create Template specific variables
+        run: |
+          cat >> terraform-code/${{ values.terraform_directory }}/template.tfvars <<EOF
+          aws_region = "${{ values.aws_region }}"
+          agent_name = "${{ values.agent_name }}"
+          EOF
+
       - name: Terraform Format
         working-directory: terraform-code/${{ values.terraform_directory }}
         run: terraform fmt -check
