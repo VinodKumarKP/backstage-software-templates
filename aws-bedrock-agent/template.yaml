@@ -66,6 +66,9 @@ spec:
           title: Terraform Variables
           type: array
           description: Key-value pairs for Terraform variables
+          default: [
+            { "key": "aws_region", "value": "us-east-1" },
+            { "key": "agent_name", "value": "default-agent" } ]
           items:
             type: object
             required:
