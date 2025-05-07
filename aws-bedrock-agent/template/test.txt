@@ -1,0 +1,5 @@
+hi,
+
+this is a test file
+Printing ${{ values.component_id }}
+Printing ${{ values.app_env }}

@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.component_id | dump }}
+  description: ${{ values.description | dump }}
+  annotations:
+    github.com/project-slug: VinodKumarKP1984/${{values.component_id}}
+    backstage.io/techdocs-ref: dir:.
+    terraform.io/repo-url: ${{ values.terraform_repo_url | dump }}
+    terraform.io/directory: ${{ values.terraform_directory | dump }}
+
+spec:
+  type: service
+  owner: development
+  lifecycle: experimental

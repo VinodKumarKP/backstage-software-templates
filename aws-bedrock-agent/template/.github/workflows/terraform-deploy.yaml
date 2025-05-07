@@ -1,0 +1,87 @@
+name: Terraform Deployment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    env:
+      TF_VERSION: ${{ values.terraform_version }}
+      TF_ENVIRONMENT: ${{ values.environment }}
+      AUTO_APPLY: ${{ values.auto_apply }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Clone Terraform repository
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ values.terraform_repo_url | replace('https://github.com/', '') }}
+          ref: "main"
+          path: terraform-code
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id:  ${{ '${{ secrets.AWS_ACCESS_KEY_ID }}' }}
+          aws-secret-access-key:  ${{ '${{ secrets.AWS_SECRET_ACCESS_KEY }}' }}
+          aws-region: us-east-1
+
+      - name: Terraform Init
+        working-directory: terraform-code/${{ values.terraform_directory }}
+        run: |
+          # Create backend config file
+          cat > backend.conf <<EOF
+          bucket = "terraform-state-${{ values.environment }}-vkp"
+          key = "${{ values.component_id }}/terraform.tfstate"
+          region = "us-east-1"
+          encrypt = true
+          dynamodb_table = "terraform-state-locks"
+          EOF
+          
+          cat > backend.tf <<EOF
+          terraform {
+            backend "s3" {}
+          }
+          EOF
+          
+          terraform init -backend-config=backend.conf
+      
+
+      {%- if(values.tf_vars.length) %}
+      - name: Create Terraform Variables
+        run: |
+          cat > terraform-code/${{ values.terraform_directory }}/terraform.tfvars <<EOF
+          {%- for thing in values.tf_vars %}
+          ${{ thing.key }} = "${{ thing.value }}"
+          {%- endfor %}
+          EOF
+      {%- endif %}
+
+      - name: Terraform Format
+        working-directory: terraform-code/${{ values.terraform_directory }}
+        run: terraform fmt -check
+
+      - name: Terraform Plan
+        working-directory: terraform-code/${{ values.terraform_directory }}
+        run: |
+          # Apply variables from config
+          export TF_VAR_file="terraform.tfvars"
+          terraform plan -var-file=$TF_VAR_file -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: terraform-code/${{ values.terraform_directory }}
+        if: github.event_name == 'push' && env.AUTO_APPLY == 'true'
+        run: terraform apply -auto-approve tfplan
