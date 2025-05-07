@@ -96,6 +96,8 @@ spec:
           app_env: ${{ parameters.environment }}
           agent_name: ${{ parameters.agent_name }}
           aws_region: ${{ parameters.aws_region }}
+          agent_type: devops
+
 
     - id: parse
       name: Parse file
