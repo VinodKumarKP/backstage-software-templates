@@ -52,12 +52,10 @@ spec:
           title: Terraform Version
           type: string
           description: Version of Terraform to use
-          default: "1.5.7"
         agent_name:
           title: Bedrock Agent Name
           type: string
           description: Name of the Bedrock Agent to use
-          default: "bedrock-agent"
         aws_region:
           title: AWS Region
           type: string
@@ -111,6 +109,8 @@ spec:
           environment: ${{ parameters.environment }}
           auto_apply: ${{ parameters.auto_apply }}
           app_env: ${{ parameters.environment }}
+          agent_name: ${{ parameters.agent_name }}
+          aws_region: ${{ parameters.aws_region }}
 
     - id: parse
       name: Parse file
