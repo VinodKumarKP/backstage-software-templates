@@ -128,7 +128,7 @@ spec:
         allowedHosts:
           - github.com
         description: This is ${{ parameters.component_id }}
-        repoUrl: github.com?owner=VinodKumarKP1984&repo=${{parameters.component_id}}
+        repoUrl: github.com?owner=VinodKumarKP1984&repo=skylense-${{parameters.component_id}}
         protectDefaultBranch: false
         repoVisibility: public
 
