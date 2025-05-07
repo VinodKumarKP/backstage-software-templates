@@ -70,6 +70,13 @@ jobs:
           EOF
       {%- endif %}
 
+      - name: Add Additional Terraform Variables
+        run: |
+          cat >> terraform-code/${{ values.terraform_directory }}/terraform.tfvars <<EOF
+          component_id = "${{ values.component_id }}"
+          environment = "${{ values.environment }}"
+          EOF
+
       - name: Terraform Format
         working-directory: terraform-code/${{ values.terraform_directory }}
         run: terraform fmt -check

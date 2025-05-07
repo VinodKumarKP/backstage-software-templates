@@ -1,0 +1,145 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: devops-aws-bedrock-agent
+  title: AWS Bedrock Agent Deployment Template
+  description: Template for deploying AWS Bedrock using Terraform
+  tags:
+    - terraform
+    - iac
+    - recommended
+spec:
+  owner: development
+  type: service
+
+  parameters:
+    - title: Provide deployment information
+      required:
+        - component_id
+        - owner
+      properties:
+        component_id:
+          title: Name
+          type: string
+          description: Unique name for the deployment
+          ui:field: EntityNamePicker
+        description:
+          title: Description
+          type: string
+          description: Help others understand what this deployment does
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+
+    - title: Configure Terraform deployment
+      properties:
+        terraform_version:
+          title: Terraform Version
+          type: string
+          description: Version of Terraform to use
+          default: "1.5.7"
+        tf_vars:
+          title: Terraform Variables
+          type: array
+          description: Key-value pairs for Terraform variables
+          default: [
+            { "key": "aws_region", "value": "us-east-1" },
+            { "key": "agent_name", "value": "devops" } ]
+          items:
+            type: object
+            required:
+              - key
+              - value
+            properties:
+              key:
+                type: string
+                description: Variable name
+              value:
+                type: string
+                description: Variable value
+
+        environment:
+          title: Target Environment
+          type: string
+          enum:
+            - development
+            - staging
+            - production
+          default: development
+        auto_apply:
+          title: Auto Apply
+          type: boolean
+          description: Automatically apply Terraform changes
+          default: false
+
+  steps:
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./template
+        values:
+          component_id: ${{ parameters.component_id }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          terraform_repo_url: https://github.com/VinodKumarKP/skylense_aws_bedrock_agent.git
+          terraform_directory: /
+          terraform_version: ${{ parameters.terraform_version }}
+          tf_vars: ${{ parameters.tf_vars }}
+          environment: ${{ parameters.environment }}
+          auto_apply: ${{ parameters.auto_apply }}
+          app_env: ${{ parameters.environment }}
+          agent_name: ${{ parameters.agent_name }}
+          aws_region: ${{ parameters.aws_region }}
+
+    - id: parse
+      name: Parse file
+      action: roadiehq:utils:fs:parse
+      input:
+        path: 'terraform.yaml'
+
+    - id: log-message
+      name: Log Parsed Contents
+      action: debug:log
+      input:
+        message: "contents: ${{ steps['parse'].output.content }}!"
+
+    - id: parse_workflow
+      name: Parse file
+      action: roadiehq:utils:fs:parse
+      input:
+        path: '.github/workflows/terraform-deploy.yaml'
+
+    - id: log-message
+      name: Log Parsed Contents
+      action: debug:log
+      input:
+        message: "contents: ${{ steps['parse_workflow'].output.content }}!"
+
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.component_id }}
+        repoUrl: github.com?owner=VinodKumarKP1984&repo=${{parameters.component_id}}
+        protectDefaultBranch: false
+        repoVisibility: public
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps['publish'].output.remoteUrl }}
