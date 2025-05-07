@@ -2,7 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: devops-aws-bedrock-agent
-  title: AWS Bedrock Agent Deployment Template
+  title: DevOps AWS Bedrock Agent
   description: Template for deploying AWS Bedrock using Terraform
   tags:
     - terraform
