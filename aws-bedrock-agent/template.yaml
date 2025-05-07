@@ -52,6 +52,7 @@ spec:
           title: Terraform Version
           type: string
           description: Version of Terraform to use
+          default: "1.5.7"
         agent_name:
           title: Bedrock Agent Name
           type: string
